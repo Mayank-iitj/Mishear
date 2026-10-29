@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useMemo, useEffect, useSyncExternalStore } from 'react';
+import Link from 'next/link';
 import {
   SymbolIndex,
   Fix,
@@ -584,31 +585,63 @@ ${promptSummaries
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
+            <Link
+              href="/eval"
+              className="px-2.5 py-1 text-xs font-mono rounded bg-emerald-950/60 hover:bg-emerald-900 text-emerald-300 border border-emerald-800 transition flex items-center gap-1"
+              title="Live 67-Case Accuracy & Latency Benchmark"
+            >
+              <span>⚡ Eval Suite</span>
+              <span className="text-[10px] bg-emerald-800/80 text-emerald-100 px-1 rounded">100%</span>
+            </Link>
+            <Link
+              href="/danger"
+              className="px-2.5 py-1 text-xs font-mono rounded bg-zinc-900 hover:bg-zinc-800 text-red-300 border border-zinc-800 hover:border-red-900 transition"
+              title="ASR Soundalikes & Semantic Safety Registry"
+            >
+              Danger Registry
+            </Link>
+            <Link
+              href="/vocab"
+              className="px-2.5 py-1 text-xs font-mono rounded bg-zinc-900 hover:bg-zinc-800 text-zinc-300 border border-zinc-800 transition"
+              title="Full Vocabulary & Wispr Dictionary Manager"
+            >
+              Vocab Manager
+            </Link>
+            <Link
+              href="/batch"
+              className="px-2.5 py-1 text-xs font-mono rounded bg-zinc-900 hover:bg-zinc-800 text-zinc-300 border border-zinc-800 transition"
+              title="Full-screen Transcript Batch Processor"
+            >
+              Batch Tool
+            </Link>
+
+            <span className="text-zinc-700 hidden sm:inline">|</span>
+
             <button
               onClick={handleLoadDemo}
-              className="px-3 py-1.5 text-xs font-mono rounded bg-emerald-600 hover:bg-emerald-500 text-white font-medium transition shadow"
+              className="px-3 py-1.5 text-xs font-mono rounded bg-emerald-600 hover:bg-emerald-500 text-black font-bold transition shadow shadow-emerald-950"
             >
               Load Demo
             </button>
             <button
               onClick={() => setIsBatchOpen(true)}
-              className="px-3 py-1.5 text-xs font-mono rounded bg-zinc-800 hover:bg-zinc-700 text-zinc-200 transition border border-zinc-700"
+              className="px-2.5 py-1.5 text-xs font-mono rounded bg-zinc-800 hover:bg-zinc-700 text-zinc-200 transition border border-zinc-700 hidden md:block"
             >
-              Batch Mode
+              Quick Batch
             </button>
             <button
               onClick={() => setIsVocabOpen(true)}
-              className="px-3 py-1.5 text-xs font-mono rounded bg-zinc-800 hover:bg-zinc-700 text-zinc-200 transition border border-zinc-700 flex items-center gap-1.5"
+              className="px-2.5 py-1.5 text-xs font-mono rounded bg-zinc-800 hover:bg-zinc-700 text-zinc-200 transition border border-zinc-700 flex items-center gap-1.5"
             >
-              <span>Vocabulary</span>
+              <span>Vocab</span>
               <span className="bg-zinc-900 text-zinc-400 text-[10px] px-1.5 py-0.2 rounded-full">
                 {isClient ? vocabulary.length : 0}
               </span>
             </button>
             <button
               onClick={() => setIsStatsOpen(true)}
-              className="px-3 py-1.5 text-xs font-mono rounded bg-zinc-800 hover:bg-zinc-700 text-zinc-200 transition border border-zinc-700"
+              className="px-2.5 py-1.5 text-xs font-mono rounded bg-zinc-800 hover:bg-zinc-700 text-zinc-200 transition border border-zinc-700"
             >
               Stats
             </button>
