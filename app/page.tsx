@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, useSyncExternalStore } from 'react';
 import {
   SymbolIndex,
   Fix,
@@ -29,6 +29,17 @@ import {
   getInitialStats,
 } from '@/lib/stats';
 
+interface SpeechRecognitionInstance {
+  continuous: boolean;
+  interimResults: boolean;
+  lang: string;
+  start: () => void;
+  stop: () => void;
+  onresult: ((event: { resultIndex: number; results: Array<Array<{ transcript: string }>> }) => void) | null;
+  onerror: (() => void) | null;
+  onend: (() => void) | null;
+}
+
 export default function MishearPage() {
   // --- STATE ---
   const [index, setIndex] = useState<SymbolIndex>(() => getDemoSymbolIndex());
@@ -44,12 +55,36 @@ export default function MishearPage() {
   const [wrapBackticks, setWrapBackticks] = useState(true);
   const [saferRewrite, setSaferRewrite] = useState(false);
 
-  const [vocabulary, setVocabulary] = useState<VocabEntry[]>(() =>
-    typeof window !== 'undefined' ? loadVocabulary() : []
+  const isClient = useSyncExternalStore(
+    () => () => {},
+    () => true,
+    () => false
   );
-  const [stats, setStats] = useState<SessionStats>(() =>
-    typeof window !== 'undefined' ? loadAllTimeStats() : getInitialStats()
+
+  const speechSupported = useSyncExternalStore(
+    () => () => {},
+    () =>
+      typeof window !== 'undefined' &&
+      Boolean(
+        (window as unknown as { SpeechRecognition?: unknown; webkitSpeechRecognition?: unknown })
+          .SpeechRecognition ||
+          (window as unknown as { SpeechRecognition?: unknown; webkitSpeechRecognition?: unknown })
+            .webkitSpeechRecognition
+      ),
+    () => false
   );
+
+  const [vocabulary, setVocabulary] = useState<VocabEntry[]>([]);
+  const [stats, setStats] = useState<SessionStats>(() => getInitialStats());
+
+  // Safe initial hydration from localStorage after mount
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setVocabulary(loadVocabulary());
+      setStats(loadAllTimeStats());
+    }, 0);
+    return () => clearTimeout(timer);
+  }, []);
 
   // Fix overrides and flag confirmations (pure declarative state)
   const [fixOverrides, setFixOverrides] = useState<
@@ -58,6 +93,84 @@ export default function MishearPage() {
   const [confirmedFlags, setConfirmedFlags] = useState<Record<string, boolean>>({});
   const [isLlmUnavailable, setIsLlmUnavailable] = useState(false);
   const [activeTooltipId, setActiveTooltipId] = useState<string | null>(null);
+
+  // State for live speech recognition
+  const [isListening, setIsListening] = useState(false);
+  const recognitionRef = React.useRef<SpeechRecognitionInstance | null>(null);
+
+  // Quick repository presets for instant 1-click indexing of real repos
+  const POPULAR_REPOS = [
+    { label: 'acme-dashboard (Demo)', url: 'https://github.com/acme-corp/acme-dashboard' },
+    { label: 'vercel/next.js', url: 'https://github.com/vercel/next.js' },
+    { label: 'supabase/supabase', url: 'https://github.com/supabase/supabase' },
+    { label: 'tailwindlabs/tailwindcss', url: 'https://github.com/tailwindlabs/tailwindcss' },
+    { label: 'shadcn-ui/ui', url: 'https://github.com/shadcn-ui/ui' },
+  ];
+
+  // Initialize Speech Recognition on client
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const windowWithSpeech = window as unknown as {
+        SpeechRecognition?: new () => SpeechRecognitionInstance;
+        webkitSpeechRecognition?: new () => SpeechRecognitionInstance;
+      };
+      const SpeechRecognitionClass =
+        windowWithSpeech.SpeechRecognition || windowWithSpeech.webkitSpeechRecognition;
+
+      if (SpeechRecognitionClass) {
+        const recog = new SpeechRecognitionClass();
+        recog.continuous = true;
+        recog.interimResults = true;
+        recog.lang = 'en-US';
+
+        recog.onresult = (event) => {
+          let currentTranscript = '';
+          for (let i = event.resultIndex; i < event.results.length; i++) {
+            currentTranscript += event.results[i][0].transcript;
+          }
+          if (currentTranscript.trim()) {
+            setPrompt((prev) => {
+              const base = prev.trim();
+              return base ? `${base} ${currentTranscript.trim()}` : currentTranscript.trim();
+            });
+            setFixOverrides({});
+            setConfirmedFlags({});
+          }
+        };
+
+        recog.onerror = () => {
+          setIsListening(false);
+        };
+
+        recog.onend = () => {
+          setIsListening(false);
+        };
+
+        recognitionRef.current = recog;
+      }
+    }
+  }, []);
+
+  const toggleListening = () => {
+    if (!speechSupported || !recognitionRef.current) {
+      showToast('Live Speech API not supported in this browser. Dictate via Wispr Flow or type.');
+      return;
+    }
+
+    if (isListening) {
+      recognitionRef.current.stop();
+      setIsListening(false);
+      showToast('Microphone paused.');
+    } else {
+      try {
+        recognitionRef.current.start();
+        setIsListening(true);
+        showToast('🎙️ Listening... Speak naturally (e.g. "open super base client dot ts")');
+      } catch {
+        setIsListening(false);
+      }
+    }
+  };
 
   // Drawers & Modals
   const [isVocabOpen, setIsVocabOpen] = useState(false);
@@ -490,7 +603,7 @@ ${promptSummaries
             >
               <span>Vocabulary</span>
               <span className="bg-zinc-900 text-zinc-400 text-[10px] px-1.5 py-0.2 rounded-full">
-                {vocabulary.length}
+                {isClient ? vocabulary.length : 0}
               </span>
             </button>
             <button
@@ -541,21 +654,43 @@ ${promptSummaries
           </div>
 
           {activeRepoTab === 'github' ? (
-            <div className="flex flex-wrap items-center gap-2">
-              <input
-                type="text"
-                value={repoUrl}
-                onChange={(e) => setRepoUrl(e.target.value)}
-                placeholder="https://github.com/owner/repo"
-                className="flex-1 min-w-[280px] bg-zinc-950 border border-zinc-700 rounded px-3 py-1.5 font-mono text-sm text-zinc-200 focus:outline-none focus:border-emerald-500"
-              />
-              <button
-                onClick={handleIndexGitHub}
-                disabled={isIndexing}
-                className="px-4 py-1.5 bg-emerald-600 hover:bg-emerald-500 disabled:bg-zinc-800 text-white font-mono text-xs font-medium rounded transition flex items-center gap-2"
-              >
-                {isIndexing ? 'Indexing...' : 'Index Repo'}
-              </button>
+            <div className="space-y-2">
+              <div className="flex flex-wrap items-center gap-2">
+                <input
+                  type="text"
+                  value={repoUrl}
+                  onChange={(e) => setRepoUrl(e.target.value)}
+                  placeholder="https://github.com/owner/repo"
+                  className="flex-1 min-w-[280px] bg-zinc-950 border border-zinc-700 rounded px-3 py-1.5 font-mono text-sm text-zinc-200 focus:outline-none focus:border-emerald-500"
+                />
+                <button
+                  onClick={handleIndexGitHub}
+                  disabled={isIndexing}
+                  className="px-4 py-1.5 bg-emerald-600 hover:bg-emerald-500 disabled:bg-zinc-800 text-white font-mono text-xs font-medium rounded transition flex items-center gap-2"
+                >
+                  {isIndexing ? 'Indexing...' : 'Index Repo'}
+                </button>
+              </div>
+
+              {/* Popular quick presets */}
+              <div className="flex flex-wrap items-center gap-1.5">
+                <span className="text-[11px] text-zinc-500 font-mono">Popular Presets:</span>
+                {POPULAR_REPOS.map((repo) => (
+                  <button
+                    key={repo.label}
+                    type="button"
+                    onClick={() => {
+                      setRepoUrl(repo.url);
+                      if (repo.url.includes('acme-dashboard')) {
+                        handleLoadDemo();
+                      }
+                    }}
+                    className="text-[11px] font-mono px-2 py-0.5 rounded bg-zinc-950 hover:bg-zinc-800 text-zinc-400 hover:text-zinc-200 border border-zinc-800 transition"
+                  >
+                    {repo.label}
+                  </button>
+                ))}
+              </div>
             </div>
           ) : (
             <div className="space-y-2">
@@ -661,7 +796,7 @@ ${promptSummaries
 
         {/* STEP 2: DICTATED PROMPT INPUT */}
         <section className="bg-zinc-900/50 border border-zinc-800 rounded-lg p-4 space-y-3">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-wrap items-center justify-between gap-2">
             <div className="flex items-center gap-2">
               <span className="font-mono text-xs px-2 py-0.5 rounded bg-zinc-800 text-emerald-400 font-bold border border-zinc-700">
                 STEP 2
@@ -670,9 +805,36 @@ ${promptSummaries
                 Dictated Prompt
               </label>
             </div>
-            <div className="flex items-center gap-3 font-mono text-xs text-zinc-400">
-              <span>{prompt.trim() ? prompt.trim().split(/\s+/).length : 0} words</span>
-              <span className="hidden sm:inline">Ctrl+Enter = Analyze</span>
+
+            <div className="flex items-center gap-2 font-mono text-xs">
+              <button
+                type="button"
+                onClick={toggleListening}
+                className={`px-3 py-1 rounded text-xs font-semibold flex items-center gap-1.5 transition ${
+                  isListening
+                    ? 'bg-red-600 text-white animate-pulse shadow-red-500/50 shadow-md'
+                    : 'bg-zinc-800 hover:bg-zinc-700 text-zinc-200 border border-zinc-700'
+                }`}
+                title={speechSupported ? 'Click to dictate via microphone' : 'Voice dictation'}
+              >
+                <span>{isListening ? '🛑 Recording...' : '🎙️ Dictate Live'}</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  setPrompt('');
+                  setFixOverrides({});
+                  setConfirmedFlags({});
+                }}
+                className="text-[11px] text-zinc-500 hover:text-zinc-300 px-2 py-1"
+              >
+                Clear
+              </button>
+
+              <span className="text-zinc-400">
+                {prompt.trim() ? prompt.trim().split(/\s+/).length : 0} words
+              </span>
             </div>
           </div>
 
@@ -736,7 +898,7 @@ ${promptSummaries
                 <span className="text-sm font-medium text-zinc-200">
                   Firewall Inspection & Diff
                 </span>
-                <span className="text-xs font-mono text-zinc-500">
+                <span suppressHydrationWarning className="text-xs font-mono text-zinc-500">
                   ({analysis.ms} ms)
                 </span>
               </div>
@@ -1116,7 +1278,7 @@ ${promptSummaries
                   )}
                 </div>
 
-                <div className="flex items-center gap-2">
+                <div className="flex flex-wrap items-center gap-2">
                   <button
                     onClick={handleCopyCorrected}
                     disabled={unconfirmedHighRiskCount > 0}
@@ -1132,6 +1294,19 @@ ${promptSummaries
                     className="px-3 py-2 bg-zinc-800 hover:bg-zinc-700 disabled:bg-zinc-900 disabled:text-zinc-700 text-zinc-200 border border-zinc-700 rounded font-mono text-xs transition"
                   >
                     Copy with fix summary
+                  </button>
+                  <button
+                    onClick={() => {
+                      if (unconfirmedHighRiskCount > 0) return;
+                      const cmd = `claude -p "${liveCorrectedText.replace(/"/g, '\\"')}"`;
+                      navigator.clipboard.writeText(cmd);
+                      showToast('Copied Claude Code CLI command: claude -p "..."');
+                    }}
+                    disabled={unconfirmedHighRiskCount > 0}
+                    className="px-3 py-2 bg-zinc-900 hover:bg-zinc-800 disabled:bg-zinc-950 disabled:text-zinc-700 text-zinc-300 border border-zinc-800 rounded font-mono text-xs transition"
+                    title="Copy formatted for Claude Code CLI"
+                  >
+                    Copy Claude CLI
                   </button>
                 </div>
               </div>
