@@ -1,0 +1,37 @@
+@import "tailwindcss";
+
+:root {
+  --background: #09090b;
+  --foreground: #f4f4f5;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-feature-settings: "rlig" 1, "calt" 1;
+}
+
+/* Custom terminal scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #18181b;
+}
+::-webkit-scrollbar-thumb {
+  background: #3f3f46;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #52525b;
+}
+
+@layer utilities {
+  .text-glow {
+    text-shadow: 0 0 12px rgba(52, 211, 153, 0.4);
+  }
+  .border-glow {
+    box-shadow: 0 0 15px -3px rgba(52, 211, 153, 0.2);
+  }
+}
