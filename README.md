@@ -56,7 +56,8 @@ Mishear provides a complete multi-page suite accessible via top-level navigation
 
 | Route | Page | Purpose |
 | :--- | :--- | :--- |
-| **`/`** | **Firewall UI** | Live prompt inspection, word-level diff, microphone dictation, and danger gate lock. |
+| **`/`** | **Editorial Landing** | Tailored Didone editorial landing page with 3 pinned multiply/clip-path stages and cumulative lighting. |
+| **`/original`** | **Firewall App** | The original full ASR firewall app with microphone dictation, word-level diff, and danger gate lock. (Also available at `/app`). |
 | **`/eval`** | **Eval Suite** | Live 67-case accuracy & latency runner with filterable confusion table and KPI scorecard. |
 | **`/batch`** | **Batch Mode** | Full-screen multi-prompt transcript log processor with Markdown & JSON exports. |
 | **`/vocab`** | **Vocab Manager** | Personal voice dictionary manager with 1-click **Wispr Flow dictionary export**. |

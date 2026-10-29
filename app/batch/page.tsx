@@ -130,7 +130,10 @@ export default function BatchPage() {
 
           <nav className="flex items-center gap-2 text-xs">
             <Link href="/" className="px-3 py-1.5 rounded text-zinc-400 hover:text-zinc-200">
-              Firewall UI
+              Landing
+            </Link>
+            <Link href="/original" className="px-3 py-1.5 rounded text-zinc-400 hover:text-zinc-200">
+              Firewall App
             </Link>
             <Link
               href="/batch"
