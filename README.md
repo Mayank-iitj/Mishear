@@ -50,15 +50,25 @@ Coding agents act on these corrupt tokens literally—installing non-existent pa
 
 ---
 
-## 2. Features
+## 2. Features & Functional Pages
+
+Mishear provides a complete multi-page suite accessible via top-level navigation:
+
+| Route | Page | Purpose |
+| :--- | :--- | :--- |
+| **`/`** | **Firewall UI** | Live prompt inspection, word-level diff, microphone dictation, and danger gate lock. |
+| **`/eval`** | **Eval Suite** | Live 67-case accuracy & latency runner with filterable confusion table and KPI scorecard. |
+| **`/batch`** | **Batch Mode** | Full-screen multi-prompt transcript log processor with Markdown & JSON exports. |
+| **`/vocab`** | **Vocab Manager** | Personal voice dictionary manager with 1-click **Wispr Flow dictionary export**. |
+| **`/danger`** | **Danger Registry** | Acoustic soundalike explorer (*deploy/destroy*, *push/pull*) and risk simulator. |
 
 - **Instant Zero-Network Demo Mode**: Click **"Load demo"** to explore `acme-dashboard` (~400 symbols) with 6 pre-configured sample prompts. Works offline with no logins or API keys.
 - **Client-Side Phonetic Matching**: Precomputed double-metaphone and fastest-levenshtein tables process 500-word prompts in `< 3 ms`.
 - **Semantic Danger Gate**: Blocks prompt copying when high-risk commands are detected (`rm -rf`, production drops, force pushes, secret exposures, soundalike confusions like *deploy* vs *destroy*).
+- **Live Speech-to-Text (`🎙️ Dictate Live`)**: Built-in browser microphone streaming using the Web Speech API alongside desktop Wispr Flow compatibility.
 - **Personal Vocabulary Manager**: Automatically learns accepted repairs and exports to **Wispr Flow** (one word per line), CSV, or JSON.
 - **Word-Level Visual Diff**: Accessible color + strikethrough/underline comparison of original vs repaired tokens.
-- **Batch Mode**: Analyze multi-prompt dictation transcripts with markdown and JSON export.
-- **GitHub Indexing & Manual Fallback**: Indexes public repos or parses pasted `package.json`, `tree`, or identifier lists.
+- **GitHub Indexing & Manual Fallback**: Indexes public repos with 1-click presets (`next.js`, `supabase`, `tailwindcss`, `shadcn/ui`) or parses pasted `package.json`, `tree`, or identifier lists.
 - **Graceful Optional LLM**: Works 100% offline; optionally leverages Anthropic's Messages API for ambiguous cases and semantic safety.
 
 ---
