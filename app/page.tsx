@@ -3,91 +3,217 @@
 import React, { useEffect, useRef } from 'react';
 import Link from 'next/link';
 
-// Editorial SVG Still-Life Images (Clean, self-contained, decodes reliably)
+// Editorial SVG Still-Life Images (Acoustic Studio Ribbon Mic & Waveform Apparatus)
 const HERO_IMAGE_SVG = `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1000" width="1600" height="1000">
   <defs>
-    <radialGradient id="light" cx="65%" cy="35%" r="65%">
-      <stop offset="0%" stop-color="%23FFF6E8" stop-opacity="0.95"/>
-      <stop offset="50%" stop-color="%23EDE3D5" stop-opacity="0.85"/>
-      <stop offset="100%" stop-color="%23D5C5B2" stop-opacity="0.7"/>
+    <radialGradient id="light" cx="60%" cy="30%" r="68%">
+      <stop offset="0%" stop-color="%23FFF8ED" stop-opacity="0.95"/>
+      <stop offset="45%" stop-color="%23EDE3D5" stop-opacity="0.85"/>
+      <stop offset="100%" stop-color="%23D0C2AF" stop-opacity="0.7"/>
     </radialGradient>
-    <linearGradient id="glass" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%" stop-color="%23FFFFFF" stop-opacity="0.6"/>
-      <stop offset="40%" stop-color="%23D8E2DC" stop-opacity="0.25"/>
-      <stop offset="100%" stop-color="%239D8189" stop-opacity="0.45"/>
+    <linearGradient id="bronze" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="%23E4C192"/>
+      <stop offset="50%" stop-color="%23B38B57"/>
+      <stop offset="100%" stop-color="%237D592C"/>
     </linearGradient>
+    <linearGradient id="gunmetal" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="%23242220"/>
+      <stop offset="35%" stop-color="%23484541"/>
+      <stop offset="70%" stop-color="%232D2B29"/>
+      <stop offset="100%" stop-color="%23191817"/>
+    </linearGradient>
+    <pattern id="micMesh" width="12" height="12" patternUnits="userSpaceOnUse">
+      <path d="M0,6 L12,6 M6,0 L6,12" stroke="%23A68252" stroke-width="0.8" opacity="0.4"/>
+      <circle cx="6" cy="6" r="1.5" fill="%23262422"/>
+    </pattern>
     <filter id="grain">
       <feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" result="noise"/>
       <feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 0.07 0"/>
     </filter>
   </defs>
+
+  <!-- Background Warm Ground & Sunlight -->
   <rect width="1600" height="1000" fill="%23F3EDE3"/>
   <rect width="1600" height="1000" fill="url(%23light)"/>
-  <!-- Marble plinth shadow -->
-  <polygon points="180,820 1420,820 1340,940 100,940" fill="%23B0A390" opacity="0.4"/>
-  <!-- Stone pedestal -->
-  <polygon points="200,680 1400,680 1320,820 120,820" fill="%23DFD5C6"/>
-  <!-- Ceramic vessel -->
-  <ellipse cx="440" cy="560" rx="140" ry="210" fill="%23C2B6A3"/>
-  <ellipse cx="440" cy="350" rx="65" ry="22" fill="%23A89A86"/>
-  <!-- Tall amber laboratory bottle -->
-  <rect x="760" y="320" width="130" height="360" rx="8" fill="%23C67D5A" opacity="0.88"/>
-  <rect x="805" y="260" width="40" height="60" fill="%239B5838"/>
-  <circle cx="825" cy="245" r="28" fill="%23E2A17B" opacity="0.9"/>
-  <!-- Fluted acoustic prism -->
-  <polygon points="1020,380 1180,290 1220,680 1060,680" fill="url(%23glass)"/>
-  <line x1="1020" y1="380" x2="1060" y2="680" stroke="%23FFF" stroke-width="2" opacity="0.8"/>
-  <line x1="1180" y1="290" x2="1220" y2="680" stroke="%23FFF" stroke-width="3" opacity="0.6"/>
-  <!-- Linen drapery shadow -->
-  <path d="M0,640 Q320,600 520,720 T960,670 T1600,600 L1600,1000 L0,1000 Z" fill="%23C5B7A4" opacity="0.45"/>
+
+  <!-- Plinth & Cast Shadow across paper -->
+  <polygon points="280,840 1380,840 1260,950 160,950" fill="%23B5A795" opacity="0.42"/>
+  <ellipse cx="800" cy="850" rx="340" ry="46" fill="%238E7E6B" opacity="0.32"/>
+
+  <!-- Cast Heavy Studio Base -->
+  <ellipse cx="800" cy="840" rx="260" ry="32" fill="%232B2927"/>
+  <ellipse cx="800" cy="834" rx="250" ry="28" fill="%233A3734"/>
+  <ellipse cx="800" cy="830" rx="180" ry="18" fill="url(%23bronze)"/>
+
+  <!-- Vertical Telescoping Shaft -->
+  <rect x="786" y="520" width="28" height="310" fill="url(%23gunmetal)"/>
+  <rect x="782" y="660" width="36" height="24" rx="3" fill="url(%23bronze)"/>
+  <!-- Knurled clutch ribs -->
+  <line x1="786" y1="664" x2="814" y2="664" stroke="%235A3E1E" stroke-width="1.5"/>
+  <line x1="786" y1="672" x2="814" y2="672" stroke="%235A3E1E" stroke-width="1.5"/>
+  <line x1="786" y1="680" x2="814" y2="680" stroke="%235A3E1E" stroke-width="1.5"/>
+
+  <!-- U-Shaped Shockmount Yoke -->
+  <path d="M640,400 C640,560 960,560 960,400" fill="none" stroke="url(%23bronze)" stroke-width="14" stroke-linecap="round"/>
+  <!-- Pivot Tension Screws -->
+  <circle cx="640" cy="400" r="14" fill="%23C69D6D"/>
+  <circle cx="960" cy="400" r="14" fill="%23C69D6D"/>
+  <circle cx="640" cy="400" r="6" fill="%234A351D"/>
+  <circle cx="960" cy="400" r="6" fill="%234A351D"/>
+
+  <!-- Outer Suspended Microphone Ring -->
+  <ellipse cx="800" cy="360" rx="120" ry="140" fill="none" stroke="%23383532" stroke-width="8"/>
+  <ellipse cx="800" cy="360" rx="104" ry="124" fill="none" stroke="url(%23bronze)" stroke-width="3"/>
+  <!-- Shockmount Elastic Cross-Lacing -->
+  <line x1="700" y1="280" x2="740" y2="310" stroke="%23BFA175" stroke-width="2.5"/>
+  <line x1="900" y1="280" x2="860" y2="310" stroke="%23BFA175" stroke-width="2.5"/>
+  <line x1="700" y1="440" x2="740" y2="410" stroke="%23BFA175" stroke-width="2.5"/>
+  <line x1="900" y1="440" x2="860" y2="410" stroke="%23BFA175" stroke-width="2.5"/>
+
+  <!-- Studio Ribbon Microphone Body -->
+  <rect x="740" y="240" width="120" height="230" rx="18" fill="url(%23gunmetal)"/>
+  <!-- Acoustic Ribbon Grille Window -->
+  <rect x="752" y="255" width="96" height="135" rx="10" fill="url(%23micMesh)"/>
+  <rect x="752" y="255" width="96" height="135" rx="10" fill="none" stroke="url(%23bronze)" stroke-width="2.5"/>
+  <!-- Center Vertical Acoustic Ribbon -->
+  <line x1="800" y1="265" x2="800" y2="380" stroke="%23EF6F79" stroke-width="2.5" opacity="0.85"/>
+
+  <!-- Emblem Badge: MISHEAR ACOUSTICS -->
+  <rect x="765" y="415" width="70" height="20" rx="2" fill="url(%23bronze)"/>
+  <rect x="768" y="418" width="64" height="14" fill="%231E1C1A"/>
+
+  <!-- Suspended Mesh Pop Filter Baffle (Foreground, multiply-blended) -->
+  <ellipse cx="870" cy="350" rx="75" ry="95" fill="%23B7BAA9" opacity="0.32" stroke="url(%23bronze)" stroke-width="4"/>
+  <ellipse cx="870" cy="350" rx="68" ry="88" fill="none" stroke="%237D592C" stroke-width="1.5" stroke-dasharray="3,3"/>
+  <path d="M870,445 C890,510 830,550 800,550" fill="none" stroke="url(%23bronze)" stroke-width="4"/>
+
+  <!-- Soundwave Vibration Ripples passing through mesh -->
+  <path d="M520,330 Q580,260 640,330 T760,330" fill="none" stroke="%23EF6F79" stroke-width="2" opacity="0.55"/>
+  <path d="M500,370 Q570,300 640,370 T780,370" fill="none" stroke="%23B7BAA9" stroke-width="1.8" opacity="0.45"/>
+
   <rect width="1600" height="1000" filter="url(%23grain)"/>
 </svg>`;
 
 const REVEAL_IMAGE_SVG = `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1200" width="1600" height="1200">
   <defs>
     <linearGradient id="warmLight" x1="0.2" y1="0" x2="0.8" y2="1">
-      <stop offset="0%" stop-color="%23FFF8F0"/>
-      <stop offset="50%" stop-color="%23E8DFD3"/>
+      <stop offset="0%" stop-color="%23FFF9F2"/>
+      <stop offset="50%" stop-color="%23E7DECة"/>
       <stop offset="100%" stop-color="%23BEB09F"/>
+    </linearGradient>
+    <linearGradient id="bronzeDial" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="%23E8CBA3"/>
+      <stop offset="50%" stop-color="%23B88F5B"/>
+      <stop offset="100%" stop-color="%237A562B"/>
     </linearGradient>
   </defs>
   <rect width="1600" height="1200" fill="url(%23warmLight)"/>
-  <!-- Acoustic wave relief panels on studio wall -->
-  <g fill="%23D0C2AF" opacity="0.7">
-    <rect x="150" y="100" width="180" height="750"/>
-    <rect x="360" y="140" width="180" height="710"/>
-    <rect x="570" y="80" width="180" height="770"/>
-    <rect x="780" y="120" width="180" height="730"/>
-    <rect x="990" y="60" width="180" height="790"/>
-    <rect x="1200" y="100" width="180" height="750"/>
+
+  <!-- Studio Acoustic Diffuser Baffle Slats in Background -->
+  <g fill="%23D0C2AF" opacity="0.6">
+    <rect x="120" y="80" width="180" height="780"/>
+    <rect x="340" y="120" width="180" height="740"/>
+    <rect x="560" y="60" width="180" height="800"/>
+    <rect x="780" y="100" width="180" height="760"/>
+    <rect x="1000" y="40" width="180" height="820"/>
+    <rect x="1220" y="80" width="180" height="780"/>
   </g>
-  <!-- Shadows across panels -->
-  <polygon points="0,0 900,1200 400,1200 0,600" fill="%238E7F6D" opacity="0.28"/>
-  <!-- Slate acoustic monolith on pedestal -->
-  <polygon points="620,400 980,400 920,950 560,950" fill="%234A4844"/>
-  <polygon points="560,950 920,950 1020,1100 460,1100" fill="%232D2C2A"/>
-  <!-- Calibrated brass pendulum -->
-  <line x1="770" y1="200" x2="770" y2="650" stroke="%23D4AF37" stroke-width="4"/>
-  <circle cx="770" cy="670" r="45" fill="%23C59B27"/>
+  <!-- Raking Shadow Angle -->
+  <polygon points="0,0 1100,1200 450,1200 0,550" fill="%238E7F6D" opacity="0.24"/>
+
+  <!-- Studio Oscilloscope & Acoustic Spectrum Analyzer Plinth -->
+  <polygon points="440,360 1160,360 1080,1020 360,1020" fill="%232D2B29"/>
+  <polygon points="360,1020 1080,1020 1180,1140 260,1140" fill="%231A1817"/>
+
+  <!-- Calibrated Waveform Display Window -->
+  <rect x="420" y="420" width="680" height="420" rx="8" fill="%230E0E0E" stroke="%234A4744" stroke-width="4"/>
+  <!-- Frequency Graticule Grid -->
+  <g stroke="%232B2B2B" stroke-width="1">
+    <line x1="420" y1="490" x2="1100" y2="490"/>
+    <line x1="420" y1="560" x2="1100" y2="560"/>
+    <line x1="420" y1="630" x2="1100" y2="630"/>
+    <line x1="420" y1="700" x2="1100" y2="700"/>
+    <line x1="420" y1="770" x2="1100" y2="770"/>
+    <line x1="533" y1="420" x2="533" y2="840"/>
+    <line x1="646" y1="420" x2="646" y2="840"/>
+    <line x1="760" y1="420" x2="760" y2="840"/>
+    <line x1="873" y1="420" x2="873" y2="840"/>
+    <line x1="986" y1="420" x2="986" y2="840"/>
+  </g>
+
+  <!-- Spoken Input Trace: "su-per-base" in Sage Green -->
+  <path d="M440,650 Q480,520 520,650 T600,650 Q640,480 680,650 T760,650 Q800,560 840,650" fill="none" stroke="%23B7BAA9" stroke-width="2.5" opacity="0.65"/>
+
+  <!-- Transcribed Phonetic Firewall Output: "supabase" in Signature Dusty Pink -->
+  <path d="M440,630 L600,630 L600,500 L760,500 L760,630 L920,630 L920,440 L1080,440" fill="none" stroke="%23EF6F79" stroke-width="3.5"/>
+
+  <!-- Laser Etched Frequency Markers -->
+  <text x="450" y="450" fill="%23B7BAA9" font-family="monospace" font-size="14" letter-spacing="2">ASR RAW: 100Hz - 4.2kHz</text>
+  <text x="880" y="450" fill="%23EF6F79" font-family="monospace" font-size="14" letter-spacing="2">REPAIRED: 1.48ms</text>
+
+  <!-- Dual Calibrated Analog Dials on Lower Chassis -->
+  <circle cx="580" cy="920" r="50" fill="url(%23bronzeDial)"/>
+  <circle cx="580" cy="920" r="42" fill="%231C1A18"/>
+  <line x1="580" y1="920" x2="605" y2="895" stroke="%23EF6F79" stroke-width="3" stroke-linecap="round"/>
+
+  <circle cx="940" cy="920" r="50" fill="url(%23bronzeDial)"/>
+  <circle cx="940" cy="920" r="42" fill="%231C1A18"/>
+  <line x1="940" y1="920" x2="920" y2="890" stroke="%23B7BAA9" stroke-width="3" stroke-linecap="round"/>
 </svg>`;
 
 const PRODUCT_STILL_SVG = `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1000" width="800" height="1000">
-  <rect width="800" height="1000" fill="%230E0E0E"/>
-  <!-- Subtle warm rim lighting -->
-  <radialGradient id="rim" cx="50%" cy="40%" r="55%">
-    <stop offset="0%" stop-color="%233A3632" stop-opacity="0.8"/>
-    <stop offset="60%" stop-color="%23171615" stop-opacity="0.9"/>
-    <stop offset="100%" stop-color="%23070707" stop-opacity="1"/>
-  </radialGradient>
+  <defs>
+    <radialGradient id="rim" cx="50%" cy="38%" r="60%">
+      <stop offset="0%" stop-color="%233A3631" stop-opacity="0.85"/>
+      <stop offset="60%" stop-color="%23171614" stop-opacity="0.95"/>
+      <stop offset="100%" stop-color="%23070707" stop-opacity="1"/>
+    </radialGradient>
+    <linearGradient id="vuGlass" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="%23FFF2DC" stop-opacity="0.95"/>
+      <stop offset="85%" stop-color="%23E8CBA3" stop-opacity="0.9"/>
+      <stop offset="100%" stop-color="%23B89360" stop-opacity="0.85"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="800" height="1000" fill="%23070707"/>
   <rect width="800" height="1000" fill="url(%23rim)"/>
-  <!-- Monolith casing -->
-  <rect x="200" y="220" width="400" height="580" fill="%231A1918" stroke="%232E2C29" stroke-width="2"/>
-  <rect x="220" y="240" width="360" height="420" fill="%230D0C0B"/>
-  <!-- Acoustic waveform laser etched -->
-  <path d="M250,450 Q300,320 350,450 T450,450 T550,450" fill="none" stroke="%23EF6F79" stroke-width="3" opacity="0.9"/>
-  <!-- Calibrated copper dial -->
-  <circle cx="400" cy="730" r="32" fill="%23B36746"/>
-  <circle cx="400" cy="730" r="14" fill="%23EAA07E"/>
+
+  <!-- Studio Rackmount Firewall Enclosure -->
+  <rect x="140" y="160" width="520" height="680" rx="12" fill="%23181716" stroke="%23302E2B" stroke-width="2.5"/>
+  <rect x="160" y="180" width="480" height="640" rx="8" fill="%230D0C0B"/>
+
+  <!-- Illuminated Analogue Decibel VU Meter -->
+  <rect x="220" y="240" width="360" height="210" rx="10" fill="url(%23vuGlass)" stroke="%23262421" stroke-width="3"/>
+  <!-- VU Meter Curved Scale -->
+  <path d="M260,390 A160,160 0 0,1 540,390" fill="none" stroke="%234A3E31" stroke-width="2"/>
+  <path d="M470,305 A160,160 0 0,1 540,390" fill="none" stroke="%23EF6F79" stroke-width="4"/>
+  <text x="320" y="340" fill="%233E3224" font-family="serif" font-size="14" font-weight="bold">MISHEAR ACOUSTICS</text>
+  <text x="365" y="365" fill="%23EF6F79" font-family="monospace" font-size="12">VU GATE</text>
+  <!-- Meter Pivot & Sensitive Needle -->
+  <circle cx="400" cy="425" r="14" fill="%232B251E"/>
+  <line x1="400" y1="425" x2="480" y2="300" stroke="%23EF6F79" stroke-width="2.5" stroke-linecap="round"/>
+
+  <!-- 4 Cumulative Pipeline LEDs (Lexicon, Metaphone, Gate, Wispr) -->
+  <g transform="translate(240, 500)">
+    <!-- Stage 0 -->
+    <circle cx="30" cy="0" r="7" fill="%23EF6F79"/>
+    <text x="48" y="5" fill="%23D0C2AF" font-family="monospace" font-size="12">I. REPO LEXICON</text>
+    <!-- Stage 1 -->
+    <circle cx="30" cy="35" r="7" fill="%23EF6F79"/>
+    <text x="48" y="40" fill="%23D0C2AF" font-family="monospace" font-size="12">II. METAPHONE SLIDING</text>
+    <!-- Stage 2 -->
+    <circle cx="30" cy="70" r="7" fill="%23EF6F79"/>
+    <text x="48" y="75" fill="%23EF6F79" font-family="monospace" font-size="12">III. DANGER GATE</text>
+    <!-- Stage 3 -->
+    <circle cx="30" cy="105" r="7" fill="%23EF6F79"/>
+    <text x="48" y="110" fill="%23B7BAA9" font-family="monospace" font-size="12">IV. WISPR SYNC</text>
+  </g>
+
+  <!-- Solid Brushed Bronze Input Gain Attenuator -->
+  <circle cx="400" cy="720" r="42" fill="%23B38B57"/>
+  <circle cx="400" cy="720" r="32" fill="%2324201A"/>
+  <circle cx="400" cy="720" r="14" fill="%23E4C192"/>
+  <line x1="400" y1="720" x2="400" y2="695" stroke="%23EF6F79" stroke-width="3" stroke-linecap="round"/>
 </svg>`;
 
 export default function LandingPage() {
@@ -220,7 +346,7 @@ export default function LandingPage() {
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={HERO_IMAGE_SVG}
-              alt="Still life editorial composition"
+              alt="Vintage studio ribbon microphone and acoustic shockmount apparatus"
               className="w-full h-full object-cover mix-blend-multiply"
             />
           </div>
@@ -350,7 +476,7 @@ export default function LandingPage() {
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={REVEAL_IMAGE_SVG}
-              alt="Architectural acoustic chamber"
+              alt="Studio oscilloscope and acoustic frequency spectrum analyzer"
               className="w-full h-full object-cover"
             />
           </div>
