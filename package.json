@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "eslint .",
     "test": "vitest run",
-    "eval": "tsx scripts/eval.ts"
+    "eval": "tsx scripts/eval.ts",
+    "dogfood": "tsx scripts/dogfood.ts"
   },
   "dependencies": {
     "double-metaphone": "^2.0.1",
